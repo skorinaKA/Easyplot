@@ -126,21 +126,21 @@ namespace easy_plot {
         //------------------------------------------------------------------------------
                 /** \brief Cтроит несколько графиков, используя данные оси X и Y.(пока мое)
                 */
-        template <typename T1, typename T2>
-        static int plot2(const std::string& name, const WindowSpec& wstyle, const std::vector<std::vector<T1>> x, const std::vector<std::vector<T2>> y, const std::vector<LineSpec>& style) {
-            using namespace tools;
-            {
-                std::lock_guard<std::mutex> lock(drawings_mutex);
-                int pos = get_pos_plot(name);
-                if (pos >= 0) {
-                    Drawing::drawings[pos]->init(name, wstyle, x, y, style);
-                }
-                else {
-                    Drawing::drawings.push_back(std::make_shared<Drawing>(name, wstyle, x, y, style));
-                }
-            }
-            return EASY_PLOT_OK;
-        }
+        //template <typename T1, typename T2>
+        //static int plot2(const std::string& name, const WindowSpec& wstyle, const std::vector<std::vector<T1>> x, const std::vector<std::vector<T2>> y, const std::vector<LineSpec>& style) {
+        //    using namespace tools;
+        //    {
+        //        std::lock_guard<std::mutex> lock(drawings_mutex);
+        //        int pos = get_pos_plot(name);
+        //        if (pos >= 0) {
+        //            Drawing::drawings[pos]->init(name, wstyle, x, y, style);
+        //        }
+        //        else {
+        //            Drawing::drawings.push_back(std::make_shared<Drawing>(name, wstyle, x, y, style));
+        //        }
+        //    }
+        //    return EASY_PLOT_OK;
+        //}
 
         // Строит тоже самое что и plot2, но только теперь он будет подписывать значения осей(пока мое)
         template <typename T1, typename T2>
