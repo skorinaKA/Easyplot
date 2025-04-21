@@ -10,6 +10,8 @@ if (POLICY CMP0141)
 endif()
 
 project ("Easyplot")
+include(CTest)
+enable_testing()
 
 #include_directories(${CMAKE_SOURCE_DIR}/main)
 link_directories(${CMAKE_SOURCE_DIR}/freeglut/lib/x64)
@@ -18,13 +20,20 @@ link_directories(${CMAKE_SOURCE_DIR}/freeglut/bin/x64)
 # Добавьте источник в исполняемый файл этого проекта.
 # add_executable (Easyplot "easy_plot.hpp" "Source.cpp")
 #include_directories(utility)
-add_executable (${PROJECT_NAME} "easy_plot.hpp" "main.cpp")
+set(CMAKE_BUILD_TYPE "Debug")
+add_executable (Easyplot "easy_plot.hpp" "main.cpp")
+if(MSVC)
+    #set_property(TARGET Easyplot APPEND PROPERTY LINK_FLAGS /DEBUG)
+    #target_link_options(Easyplot PUBLIC /DEBUG)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zi")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DEBUG")
+endif()
 add_custom_command(
-    TARGET ${PROJECT_NAME}
+    TARGET Easyplot
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
        "${CMAKE_SOURCE_DIR}/freeglut/bin/x64/freeglut.dll"
-        "${CMAKE_SOURCE_DIR}/out/build/x64-debug" 
+       $<TARGET_FILE_DIR:Easyplot>
 )
 
 #add_subdirectory(utility)
@@ -42,10 +51,19 @@ add_custom_target(
 
 # TODO: Добавьте тесты и целевые объекты, если это необходимо.
 
-include(CTest)
-enable_testing()
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
+#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
+#target_compile_options(Easyplot PRIVATE -fsanitize=fuzzer,undefined,address)
+target_compile_options(Easyplot PRIVATE -coverage)
+target_link_options(Easyplot PRIVATE -coverage)
 
-add_test(Test_1, "${CMAKE_BINARY_DIR}/${PROJECT_NAME}" "1")
-add_test(Test_2, "${CMAKE_BINARY_DIR}/${PROJECT_NAME}" "2")
-add_test(Test_3, "${CMAKE_BINARY_DIR}/${PROJECT_NAME}" "3")
-add_test(Test_4, "${CMAKE_BINARY_DIR}/${PROJECT_NAME}" "4")
+#set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Debug")
+
+add_test(Test_1, Easyplot "1")
+add_test(Test_2, Easyplot "2")
+add_test(Test_3, Easyplot "3")
+add_test(Test_4, Easyplot "4")
+add_test(Test_5, Easyplot "5")
+add_test(Test_6, Easyplot "6")
+add_test(Test_7, Easyplot "7")
+add_test(Test_8, Easyplot "8")

@@ -21,11 +21,11 @@ void Test_print_screen_3() {
     screen.print_screen("screen3.ppm", 320, 240, easy_plot::utility::Screenshot::TypesFormats::USE_PPM);
 }
 
-void Test_init_1(int* argc, char** argv) {
+void Test_init_1(int* argc, char* argv[]) {
     ep::init(argc, argv);
 }
 
-void Test_init_2(int* argc, char** argv) {
+void Test_init_2(int* argc, char* argv[]) {
     *argc = 0;
     ep::init(argc, argv);
     *argc = 1;
@@ -39,26 +39,171 @@ void Test_get_pos_plot_1() {
     assert(res == -1);
 }
 
-void Test_get_pos_plot_2() {
+void Test_get_pos_plot_2(int* argc, char* argv[]) {
+    ep::init(argc, argv);
+    cout << "Hello plot!" << endl;
 
+
+    ep::WindowSpec wstyle0;
+    wstyle0.is_zero_x_line = true;
+    wstyle0.is_zero_y_line = true;
+    std::vector<double> test1_x = { 1.2,1,1,1,1.2,1,1 };
+    int res = ep::plot("test1", wstyle0, test1_x);
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    assert(res == 0);
 }
 
-void Test_plot_1() {
+void Test_plot_1(int* argc, char* argv[]) {
+    ep::init(argc, argv);
+    cout << "Hello plot!" << endl;
 
+
+    ep::WindowSpec wstyle0;
+    wstyle0.is_zero_x_line = true;
+    wstyle0.is_zero_y_line = true;
+    std::vector<double> test1_x = { 1.2,1,1,1,1.2,1,1 };
+    int res = ep::plot("test1", wstyle0, test1_x);
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    assert(res == 0);
 }
 
-void Test_plot_2() {
-
+void Test_plot_2(int* argc, char* argv[]) {
+    ep::WindowSpec wstyle0;
+    wstyle0.is_zero_x_line = true;
+    wstyle0.is_zero_y_line = true;
+    std::vector<double> test2_x = { 0,2,3,4,2,0,1 };
+    int res = ep::plot("test2", test2_x);
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    assert(res == 0);
 }
 
-void Test_plot_3() {
-
+void Test_plot_3(int* argc, char* argv[]) {
+    ep::WindowSpec wstyle3;
+    wstyle3.is_zero_x_line = true;
+    wstyle3.is_zero_y_line = true;
+    std::vector<double> test2_x = { 0,2,3,4,2,0,1 };
+    std::vector<double> test3_x = { -2,2,6,7,8,10,12 };
+    int res = ep::plot("test3", wstyle3, test3_x, test2_x, ep::LineSpec(1, 1, 0));
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    assert(res == 0);
 }
 
 void Test_plot_4() {
+    std::vector<double> test1_x = { 1.2,1,1,1,1.2,1,1 };
+    std::vector<double> test1_xx;
+    for (int i = 0; i < 2000; ++i) {
+        test1_xx.push_back(i % 53);
+    }
+    ep::WindowSpec wstyle_xx;
+    wstyle_xx.grid_period = 2.0 / 24.0;
+    int res = ep::plot<double>("test1-1", wstyle_xx, (int)1, test1_xx, ep::LineSpec(1, 0, 0));
+    assert(res == 0);
+    res = ep::plot<double>("test1-2", wstyle_xx, (int)1, test1_xx, ep::LineSpec(0, 1, 0));
+    assert(res == 0);
+    res = ep::plot<double>("test1-3", wstyle_xx, (int)1, test1_xx, ep::LineSpec(0, 0, 1));
+    assert(res == 0);
+    res = ep::plot<double>("test1-4", wstyle_xx, (int)1, test1_xx, ep::LineSpec(0, 1, 1));
+    assert(res == 0);
 
+    ep::WindowSpec wstyle;
+    wstyle.grid_period = 2.0 / 24.0;
+    std::vector<double> test2_x = { 0,2,3,4,2,0,1 };
+    std::vector<double> test3_x = { -2,2,6,7,8,10,12 };
+    ep::plot<double>("test4", wstyle, (int)3, test1_x, ep::LineSpec(1, 0, 0), test2_x, ep::LineSpec(1, 0, 1), test3_x, ep::LineSpec(0, 1, 0));
 }
 
+void Test_corelogram_1(int* argc, char* argv[]) {
+    ep::init(argc, argv);
+    cout << "Hello corelogram!" << endl;
+    int count = 10;
+    ep::WindowSpec wave1;
+    std::vector<std::vector<double>> waves1x(count);
+    std::vector<std::vector<double>> waves2x(count);
+    std::vector<std::vector<double>> waves3x(count);
+    std::vector<std::vector<double>> waves1y(count);
+    std::vector<std::vector<double>> waves2y(count);
+    std::vector<std::vector<double>> waves3y(count);
+    std::vector<ep::LineSpec> line_style1, line_style2, line_style3;
+    int res = ep::corelogram("testwave", wave1, waves1x, waves1y, line_style1);
+}
+
+void Test_corelogram_2(int* argc, char* argv[]) {
+    ep::init(argc, argv);
+    cout << "Hello corelogram!" << endl;
+    int count = 10;
+    std::vector<std::vector<double>> waves1x(count);
+    std::vector<std::vector<double>> waves2x(count);
+    std::vector<std::vector<double>> waves3x(count);
+    std::vector<std::vector<double>> waves1y(count);
+    std::vector<std::vector<double>> waves2y(count);
+    std::vector<std::vector<double>> waves3y(count);
+    std::vector<ep::LineSpec> line_style1, line_style2, line_style3;
+    for (int size = 0; size < count; size++) {
+        for (int i = 0; i < 50; ++i) {
+            if (i % 2 == 0) {
+                waves1y[size].push_back(1 + size * 2);
+                waves1y[size].push_back(0 + size * 2);
+                waves2y[size].push_back(0 + size * 2);
+                waves2y[size].push_back(1 + size * 2);
+                waves3y[size].push_back(1 + size * 2);
+                waves3y[size].push_back(0 + size * 2);
+            }
+            else {
+                waves1y[size].push_back(0 + size * 2);
+                waves1y[size].push_back(1 + size * 2);
+                waves2y[size].push_back(1 + size * 2);
+                waves2y[size].push_back(0 + size * 2);
+                waves3y[size].push_back(0 + size * 2);
+                waves3y[size].push_back(1 + size * 2);
+            }
+            waves1x[size].push_back(i);
+            waves1x[size].push_back(i);
+            waves2x[size].push_back(i);
+            waves2x[size].push_back(i);
+            waves3x[size].push_back(i);
+            waves3x[size].push_back(i);
+        }
+        line_style1.push_back(ep::LineSpec(1, 0, 0));
+        line_style2.push_back(ep::LineSpec(0, 1, 0));
+        line_style3.push_back(ep::LineSpec(1, 0, 1));
+    }
+    ep::WindowSpec wave1;
+    wave1.is_zero_x_line = true;
+    wave1.is_zero_y_line = true;
+    ep::WindowSpec wave2;
+    wave2.is_zero_x_line = true;
+    wave2.is_zero_y_line = true;
+    wave1.height = 600;
+    wave1.width = 800;
+    wave1.grid_period = 2.0 / 24.0;
+    int res = ep::corelogram("testwave", wave1, waves1x, waves1y, line_style1);
+    assert(res == 0);
+    res = ep::corelogram("testwave2", wave1, waves2x, waves2y, line_style2);
+    assert(res == 0);
+    res = ep::corelogram("testwave3", wave1, waves3x, waves3y, line_style3);
+    assert(res == 0);
+    ep::save_image("qwerty", "testwave999.ppm");
+    ep::save_image("testwave", "");
+    ep::save_image("testwave", "testwave.ppm");
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+}
+
+void Test_save_image_1() {
+    ep::save_image("qwerty", "qwerty999.ppm");
+}
+
+void Test_save_image_2(int* argc, char* argv[]) {
+    ep::init(argc, argv);
+    cout << "Hello plot!" << endl;
+
+
+    ep::WindowSpec wstyle0;
+    wstyle0.is_zero_x_line = true;
+    wstyle0.is_zero_y_line = true;
+    std::vector<double> test1_x = { 1.2,1,1,1,1.2,1,1 };
+    int res = ep::plot("test1", wstyle0, test1_x);
+    ep::save_image("test1", "test1.ppm");
+}
 
 void Test_draw_heatmap_3(){
     ep::WindowSpec image_wstyle;
@@ -82,7 +227,7 @@ void Test_draw_heatmap_3(){
     image_wstyle.is_invert_color_heatmap = true;
     res = ep::draw_heatmap("image_heatmap_invert_color", image_wstyle, &image_data[0][0], 32, 32);
     assert(res == 0);
-    std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 }
 
 void EasyPlot(int *argc, char **argv)
@@ -126,9 +271,13 @@ void EasyPlot(int *argc, char **argv)
     ep::WindowSpec wstyle_xx;
     wstyle_xx.grid_period = 2.0 / 24.0;
     res = ep::plot<double>("test1-1", wstyle_xx, (int)1, test1_xx, ep::LineSpec(1, 0, 0));
+    assert(res == 0);
     res = ep::plot<double>("test1-2", wstyle_xx, (int)1, test1_xx, ep::LineSpec(0, 1, 0));
+    assert(res == 0);
     res = ep::plot<double>("test1-3", wstyle_xx, (int)1, test1_xx, ep::LineSpec(0, 0, 1));
+    assert(res == 0);
     res = ep::plot<double>("test1-4", wstyle_xx, (int)1, test1_xx, ep::LineSpec(0, 1, 1));
+    assert(res == 0);
 
     ep::WindowSpec wstyle;
     wstyle.grid_period = 2.0 / 24.0;
@@ -147,6 +296,7 @@ void EasyPlot(int *argc, char **argv)
         line, ep::LineSpec(1, 0, 0),
         line05, ep::LineSpec(1, 0, 1),
         line06, ep::LineSpec(0, 1, 0));
+    assert(res == 0);
 
     ep::save_image("qwerty", "testwave999.ppm");
     ep::save_image("test5", "test5.ppm");
@@ -316,6 +466,53 @@ void EasyPlot(int *argc, char **argv)
     //}
 }
 
+
+void Test_hsv_to_rgb() {
+    float r, g, b;
+    float value = 0.0;
+    easy_plot::utility::hsv_to_rgb(value, r, g, b);
+    assert(r == 1.0F);
+    assert(g == 0.0F);
+    assert(b == 0.0F);
+    value = 0.2;
+    easy_plot::utility::hsv_to_rgb(value, r, g, b);
+    assert(r == 1.0F);
+    assert(g == 0.8F);
+    assert(b == 0.0F);
+    value = 0.4;
+    easy_plot::utility::hsv_to_rgb(value, r, g, b);
+    assert(r != 0.4F);
+    assert(g == 1.0F);
+    assert(b == 0.0F);
+    value = 0.6;
+    easy_plot::utility::hsv_to_rgb(value, r, g, b);
+    assert(r == 0.0F);
+    assert(g == 1.0F);
+    assert(b == 0.4F);
+    value = 0.8;
+    easy_plot::utility::hsv_to_rgb(value, r, g, b);
+    assert(r == 0.0F);
+    assert(g == 0.8F);
+    assert(b == 1.0F);
+    value = 1.0;
+    easy_plot::utility::hsv_to_rgb(value, r, g, b);
+    assert(r == 0.0F);
+    assert(g == 0.0F);
+    assert(b == 1.0F);
+
+    value = -100.0;
+    easy_plot::utility::hsv_to_rgb(value, r, g, b);
+    assert(r == 1.0F);
+    assert(g != 0.0F);
+    assert(b == 0.0F);
+
+    value = 100.0;
+    easy_plot::utility::hsv_to_rgb(value, r, g, b);
+    assert(r == 0.0F);
+    assert(g == 0.0F);
+    assert(b == 1.0F);
+}
+
 int main(int argc, char* argv[]) {
 
     if (argc > 1)
@@ -330,20 +527,32 @@ int main(int argc, char* argv[]) {
             break;
         case 2:
             Test_init_1(&argc, argv);
-            //Test_init_2(&argc, argv);
+            Test_init_2(&argc, argv);
             break;
         case 3:
             Test_get_pos_plot_1();
             break;
         case 4:
             ep::init(&argc, argv);
-            Test_plot_1();
-            Test_plot_2();
-            Test_plot_3();
+            Test_plot_1(&argc, argv);
+            Test_plot_2(&argc, argv);
+            Test_plot_3(&argc, argv);
             EasyPlot(&argc, argv);
             break;
+        case 5:
+            Test_corelogram_1(&argc, argv);
+            Test_corelogram_2(&argc, argv);
+            break;
+        case 6:
+            Test_save_image_1();
+            Test_save_image_2(&argc, argv);
+            break;
         case 7:
-            Test_draw_heatmap_3();
+            Test_draw_heatmap_3();   
+            break;
+        case 8:
+            Test_hsv_to_rgb();
+            break;
         default:
             EasyPlot(&argc, argv);
             break;
