@@ -23,13 +23,16 @@ void Test_print_screen_3() {
 
 void Test_init_1(int* argc, char* argv[]) {
     ep::init(argc, argv);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
 void Test_init_2(int* argc, char* argv[]) {
+    int p = *argc;
     *argc = 0;
-    ep::init(argc, argv);
-    *argc = 1;
-    ep::init(argc, argv);
+    ep::init(&p, argv);
+    *argc = p;
+    ep::init(&p, argv);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
 void Test_get_pos_plot_1() {
@@ -110,6 +113,7 @@ void Test_plot_4() {
     std::vector<double> test2_x = { 0,2,3,4,2,0,1 };
     std::vector<double> test3_x = { -2,2,6,7,8,10,12 };
     ep::plot<double>("test4", wstyle, (int)3, test1_x, ep::LineSpec(1, 0, 0), test2_x, ep::LineSpec(1, 0, 1), test3_x, ep::LineSpec(0, 1, 0));
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 }
 
 void Test_corelogram_1(int* argc, char* argv[]) {
@@ -202,7 +206,27 @@ void Test_save_image_2(int* argc, char* argv[]) {
     wstyle0.is_zero_y_line = true;
     std::vector<double> test1_x = { 1.2,1,1,1,1.2,1,1 };
     int res = ep::plot("test1", wstyle0, test1_x);
+    assert(res == 0);
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     ep::save_image("test1", "test1.ppm");
+}
+
+void Test_draw_heatmap_1() {
+    ep::WindowSpec image_wstyle;
+    float image_data[32][32] = {};
+    image_wstyle.is_color_heatmap = true;
+    int res = ep::draw_heatmap("", image_wstyle, &image_data[0][0], 32, 32);
+    assert(res == 1);
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+}
+
+void Test_draw_heatmap_2() {
+    ep::WindowSpec image_wstyle;
+    float image_data[32][32] = {};
+    image_wstyle.is_color_heatmap = true;
+    int res = ep::draw_heatmap("heat", image_wstyle, &image_data[0][0], 32, 32);
+    assert(res == 0);
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 }
 
 void Test_draw_heatmap_3(){
@@ -518,6 +542,7 @@ int main(int argc, char* argv[]) {
     if (argc > 1)
     {
         int switch_on = std::atoi(argv[1]);
+        int p = argc;
         switch (switch_on)
         {
         case 1:
@@ -537,6 +562,7 @@ int main(int argc, char* argv[]) {
             Test_plot_1(&argc, argv);
             Test_plot_2(&argc, argv);
             Test_plot_3(&argc, argv);
+            Test_plot_4();
             EasyPlot(&argc, argv);
             break;
         case 5:
@@ -548,6 +574,8 @@ int main(int argc, char* argv[]) {
             Test_save_image_2(&argc, argv);
             break;
         case 7:
+            Test_draw_heatmap_1();
+            Test_draw_heatmap_2();
             Test_draw_heatmap_3();   
             break;
         case 8:

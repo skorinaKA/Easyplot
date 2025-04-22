@@ -9,38 +9,70 @@ if (POLICY CMP0141)
   set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
 endif()
 
+
 project ("Easyplot")
 include(CTest)
 enable_testing()
 
 #include_directories(${CMAKE_SOURCE_DIR}/main)
-link_directories(${CMAKE_SOURCE_DIR}/freeglut/lib/x64)
-link_directories(${CMAKE_SOURCE_DIR}/freeglut/bin/x64)
+if(MSVC)
+    message("MSVC link")
+	link_directories(${CMAKE_SOURCE_DIR}/freeglut-msvc/lib/x64)
+	link_directories(${CMAKE_SOURCE_DIR}/freeglut-msvc/bin/x64)
+endif()
+
+if(MINGW)
+    message("MINGW link")
+	link_directories(${CMAKE_SOURCE_DIR}/freeglut-mingw/lib/x64)
+	link_directories(${CMAKE_SOURCE_DIR}/freeglut-mingw/bin/x64)
+endif()
+
 
 # Добавьте источник в исполняемый файл этого проекта.
 # add_executable (Easyplot "easy_plot.hpp" "Source.cpp")
 #include_directories(utility)
 set(CMAKE_BUILD_TYPE "Debug")
 add_executable (Easyplot "easy_plot.hpp" "main.cpp")
+#target_link_libraries(Easyplot pthread)
+#set(CMAKE_CXX_FLAGS "-O0 -g --coverage")
+#set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DEBUG")
+#set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE ON)
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+   
 if(MSVC)
-    #set_property(TARGET Easyplot APPEND PROPERTY LINK_FLAGS /DEBUG)
-    #target_link_options(Easyplot PUBLIC /DEBUG)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zi")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DEBUG")
-endif()
-add_custom_command(
+    message("MSVC post")
+    add_custom_command(
     TARGET Easyplot
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-       "${CMAKE_SOURCE_DIR}/freeglut/bin/x64/freeglut.dll"
+       "${CMAKE_SOURCE_DIR}/freeglut-msvc/bin/x64/freeglut.dll"
        $<TARGET_FILE_DIR:Easyplot>
-)
+    )
+    #set_property(TARGET Easyplot APPEND PROPERTY LINK_FLAGS /DEBUG)
+    #target_link_options(Easyplot PUBLIC /DEBUG)
+    #set(CMAKE_CXX_FLAGS "-O0 -g --coverage")
+    #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DEBUG")
+    #set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE ON)
+endif()
 
-#add_subdirectory(utility)
-#target_link_libraries(Easyplot utility)
+
+if(MINGW)
+    target_link_libraries(Easyplot freeglut)
+    target_link_libraries(Easyplot opengl32)
+    message("MINGW post")
+    add_custom_command(
+    TARGET Easyplot
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+       "${CMAKE_SOURCE_DIR}/freeglut-mingw/bin/x64/freeglut.dll"
+       $<TARGET_FILE_DIR:Easyplot>
+    )
+endif()
+
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Easyplot PROPERTY CXX_STANDARD 20)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
 
 add_custom_target(
@@ -58,6 +90,8 @@ target_compile_options(Easyplot PRIVATE -coverage)
 target_link_options(Easyplot PRIVATE -coverage)
 
 #set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Debug")
+#list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/test)
+#include (TestingScript)
 
 add_test(Test_1, Easyplot "1")
 add_test(Test_2, Easyplot "2")
