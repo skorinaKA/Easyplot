@@ -80,7 +80,7 @@ namespace easy_plot {
             is_once = true;
         }
         //------------------------------------------------------------------------------
-        static int get_pos_plot(const std::string& name) {
+        static int get_pos_plot(const std::string_view name) {
             using namespace tools;
             for (size_t i = 0; i < Drawing::drawings.size(); ++i) {
                 if (Drawing::drawings[i]->window_name == name) return i;
@@ -144,7 +144,7 @@ namespace easy_plot {
 
         // Строит тоже самое что и plot2, но только теперь он будет подписывать значения осей(пока мое)
         template <typename T1, typename T2>
-        static int corelogram(const std::string& name, const WindowSpec& wstyle, const std::vector<std::vector<T1>> x, const std::vector<std::vector<T2>> y, const std::vector<LineSpec>& style) {
+        static int corelogram(const std::string& name, const WindowSpec& wstyle, const std::vector<std::vector<T1>> &x, const std::vector<std::vector<T2>> &y, const std::vector<LineSpec>& style) {
             using namespace tools;
             {
                 std::lock_guard<std::mutex> lock(drawings_mutex);
@@ -163,7 +163,7 @@ namespace easy_plot {
                 /** \brief Cтроит несколько графиков, используя вектор векторов(пока мое)
                 */
         template <typename T1>
-        static int plot(const std::string& name, const WindowSpec& wstyle, const std::vector<std::vector<T1>> waves, const std::vector<LineSpec>& style) {
+        static int plot(const std::string& name, const WindowSpec& wstyle, const std::vector<std::vector<T1>> &waves, const std::vector<LineSpec>& style) {
             using namespace tools;
 
             {
@@ -256,7 +256,7 @@ namespace easy_plot {
                  * \param window_name имя окна, которое необходимо сохранить
                  * \param file_name имя файла изображения
                  */
-        static void save_image(std::string window_name, std::string file_name) {
+        static void save_image(std::string_view window_name, std::string_view file_name) {
             using namespace tools;
             std::lock_guard<std::mutex> lock(drawings_mutex);
             int pos = get_pos_plot(window_name);

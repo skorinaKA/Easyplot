@@ -636,9 +636,9 @@ namespace easy_plot {
                         const double dh = convert_pixel_to_relative_len(glutBitmapHeight(window_style.font), height);
                         const double OFFSET_Y = 0.01;
 
-                        const double dw1 = convert_pixel_to_relative_len(glutBitmapLength(window_style.font, (const unsigned char*)text_line.c_str()), width);
-                        const double dw2 = convert_pixel_to_relative_len(glutBitmapLength(window_style.font, (const unsigned char*)text_x.c_str()), width);
-                        const double dw3 = convert_pixel_to_relative_len(glutBitmapLength(window_style.font, (const unsigned char*)text_y.c_str()), width);
+                        const double dw1 = convert_pixel_to_relative_len(glutBitmapLength(window_style.font, reinterpret_cast<const unsigned char*>(text_line.c_str())), width);
+                        const double dw2 = convert_pixel_to_relative_len(glutBitmapLength(window_style.font, reinterpret_cast<const unsigned char*>(text_x.c_str())), width);
+                        const double dw3 = convert_pixel_to_relative_len(glutBitmapLength(window_style.font, reinterpret_cast<const unsigned char*>(text_y.c_str())), width);
                         const double dw = std::max(dw1, std::max(dw2, dw3));
                         const double OFFSET_X = 0.02;
 
