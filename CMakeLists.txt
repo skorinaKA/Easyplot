@@ -95,6 +95,22 @@ add_custom_target(test_memcheck
 target_compile_options(Easyplot PRIVATE -coverage)
 target_link_options(Easyplot PRIVATE -coverage)
 
+
+string(SUBSTRING ${TEST_TOOL} 3 -1 EASY_PLOT_TEST_TOOL)
+message(STATUS "Enabling ${EASY_PLOT_TEST_TOOL} sanitizer")
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Werror -O0 -fsanitize=${EASY_PLOT_TEST_TOOL} -fno-omit-frame-pointer")
+set(CMAKE_C_LINK_FLAGS "${CMAKE_C_LINK_FLAGS} -fsanitize=${EASY_PLOT_TEST_TOOL}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Werror -O0 -fsanitize=${EASY_PLOT_TEST_TOOL} -fno-omit-frame-pointer")
+set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -g -Werror -O0 -fsanitize=${EASY_PLOT_TEST_TOOL} -fno-omit-frame-pointer")
+
+
+if(${TEST_TOOL} STREQUAL "sa-memory")
+  set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIE -fsanitize-memory-track-origins")
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIE -fsanitize-memory-track-origins") 
+endif()
+
+
 #set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Debug")
 #list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/test)
 #include (TestingScript)
