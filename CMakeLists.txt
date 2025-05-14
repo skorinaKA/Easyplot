@@ -69,6 +69,15 @@ if(MINGW)
     )
 endif()
 
+# sudo apt-get install freeglut3 freeglut3-dev libglew-dev
+# sudo apt-get install mesa-utils
+if(UNIX)
+# SET(CMAKE_CXX_COMPILER "/usr/bin/clang++" CACHE STRING "C++ compiler" FORCE)
+# SET(CMAKE_C_COMPILER "/usr/bin/clang" CACHE STRING "C compiler" FORCE)
+    target_link_libraries(Easyplot GL glut pthread)
+    message("UNIX post")
+    # set(CMAKE_CXX_FLAGS "-fpermissive")
+endif()
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Easyplot PROPERTY CXX_STANDARD 20)
@@ -96,16 +105,19 @@ target_compile_options(Easyplot PRIVATE -coverage)
 target_link_options(Easyplot PRIVATE -coverage)
 
 
-string(SUBSTRING ${TEST_TOOL} 3 -1 EASY_PLOT_TEST_TOOL)
-message(STATUS "Enabling ${EASY_PLOT_TEST_TOOL} sanitizer")
+# string(SUBSTRING ${TEST_TOOL} 3 - 1 EASY_PLOT_TEST_TOOL)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Werror -O0 -fsanitize=${EASY_PLOT_TEST_TOOL} -fno-omit-frame-pointer")
-set(CMAKE_C_LINK_FLAGS "${CMAKE_C_LINK_FLAGS} -fsanitize=${EASY_PLOT_TEST_TOOL}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Werror -O0 -fsanitize=${EASY_PLOT_TEST_TOOL} -fno-omit-frame-pointer")
-set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -g -Werror -O0 -fsanitize=${EASY_PLOT_TEST_TOOL} -fno-omit-frame-pointer")
+if(NOT ${TEST_TOOL} STREQUAL "")
+message(STATUS "Enabling ${TEST_TOOL} sanitizer")
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Werror -O0 -fsanitize=${TEST_TOOL} -fno-omit-frame-pointer")
+set(CMAKE_C_LINK_FLAGS "${CMAKE_C_LINK_FLAGS} -fsanitize=${TEST_TOOL}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Werror -O0 -fsanitize=${TEST_TOOL} -fno-omit-frame-pointer")
+set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -g -Werror -O0 -fsanitize=${TEST_TOOL} -fno-omit-frame-pointer")
 
-if(${TEST_TOOL} STREQUAL "sa-memory")
+endif()
+
+if("${TEST_TOOL}" STREQUAL "memory")
   set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIE -fsanitize-memory-track-origins")
   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIE -fsanitize-memory-track-origins") 
 endif()
